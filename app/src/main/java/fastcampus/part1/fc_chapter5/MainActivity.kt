@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         operatorText.clear()
 
         updateEquationTextView()
+        binding.equationTextView.text = "0"  // 기존 equation 텍스트 -> 0으로 대체
         binding.resultTextView.text = ""
     }
 
@@ -50,8 +51,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val firstNumber =
-            firstNumberText.toString().toBigDecimal()  // 소수점을 정확하게 계산하기 위해서 BigDecimal 사용해야 한다.
+        val firstNumber = firstNumberText.toString().toBigDecimal()  // 소수점을 정확하게 계산하기 위해서 BigDecimal 사용해야 한다.
         val secondNumber = secondNumberText.toString().toBigDecimal()
 
         val result = when (operatorText.toString()) {
@@ -86,6 +86,12 @@ class MainActivity : AppCompatActivity() {
         val firstFormattedNumber = if (firstNumberText.isNotEmpty()) decimalFormat.format(firstNumberText.toString().toBigDecimal()) else ""
         val secondFormattedNumber = if (secondNumberText.isNotEmpty()) decimalFormat.format(secondNumberText.toString().toBigDecimal()) else ""
 
-        binding.equationTextView.text = "$firstFormattedNumber $operatorText $secondFormattedNumber"
+        // 값을 처음 입력했을 때 UI 상 공백 추가되는 것 막기
+        if (operatorText.isEmpty()) {
+            binding.equationTextView.text = "$firstFormattedNumber"
+        } else {
+            binding.equationTextView.text =
+                "$firstFormattedNumber $operatorText $secondFormattedNumber"
+        }
     }
 }

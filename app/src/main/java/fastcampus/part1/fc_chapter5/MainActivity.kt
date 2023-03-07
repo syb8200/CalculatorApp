@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import fastcampus.part1.fc_chapter5.databinding.ActivityMainBinding
+import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private val firstNumberText = StringBuilder("")
     private val secondNumberText = StringBuilder("")
     private val operatorText = StringBuilder("")
+    private val decimalFormat = DecimalFormat("#,###")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +50,15 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val firstNumber = firstNumberText.toString().toInt()
-        val secondNumber = secondNumberText.toString().toInt()
+        val firstNumber =
+            firstNumberText.toString().toBigDecimal()  // 소수점을 정확하게 계산하기 위해서 BigDecimal 사용해야 한다.
+        val secondNumber = secondNumberText.toString().toBigDecimal()
 
-        val result = when(operatorText.toString()) {
-            "+" -> firstNumber + secondNumber
-            "-" -> firstNumber - secondNumber
+        val result = when (operatorText.toString()) {
+            "+" -> decimalFormat.format(firstNumber + secondNumber)
+            "-" -> decimalFormat.format(firstNumber - secondNumber)
             else -> "잘못된 수식 입니다."
-        }.toString()
+        }
 
         binding.resultTextView.text = result
     }
@@ -78,6 +81,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateEquationTextView() {
-        binding.equationTextView.text = "$firstNumberText $operatorText $secondNumberText"
+        // decimalFormat에서 포멧팅 진행 : 3자리 마다 ,찍힘 + 0543 이런 숫자는 없기 때문에 맨 앞에 0 입력해하면 0 사라짐
+        // 이렇게 포멧팅 한 결과 값 == 문자열
+        val firstFormattedNumber = if (firstNumberText.isNotEmpty()) decimalFormat.format(firstNumberText.toString().toBigDecimal()) else ""
+        val secondFormattedNumber = if (secondNumberText.isNotEmpty()) decimalFormat.format(secondNumberText.toString().toBigDecimal()) else ""
+
+        binding.equationTextView.text = "$firstFormattedNumber $operatorText $secondFormattedNumber"
     }
 }
